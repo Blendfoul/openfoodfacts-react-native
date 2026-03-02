@@ -1,26 +1,89 @@
-# Open Food Facts React Native code sample
-- Example code to add to a React native mobile application to contribute products to Open Food Facts, Open Beauty Facts, Open Pet Food Facts, Open Products Facts
+# react-native-openfoodfacts
 
-Join the [Open Food Facts slack](https://openfoodfacts.slack.com) (#javascript) if you'd like to contribute or just reuse the code and need help.
+`react-native-openfoodfacts` is now scaffolded as a New Architecture React Native library, built as a TurboModule for Open Food Facts mobile integrations. Phase 1 focuses on project structure, codegen wiring, Android/iOS native registration, and a minimal example app that validates native linking with a placeholder method.
 
-## Help needed
-- Ideally, this should be turned into a proper React Native package, based on openfoodfacts-js that Mobile apps can depend on for the shared chores all apps using Open Food Facts have to implement.
+## Phase 1 Status
 
-## 📚 Documentation
-- API documentation : https://openfoodfacts.github.io/openfoodfacts-server/api/
-- JavaScript wiki page : https://wiki.openfoodfacts.org/API/Javascript
-## 👩‍⚖️ License
-- The code is release under the APACHE 2.0 license (see LICENSE file).
+This repository now includes:
 
-## Credits
-- Some icons are taken from [FlatIcon](www.flaticon.com)
+- A publishable library scaffold with TypeScript entrypoints
+- A TurboModule contract defined in `src/NativeOpenFoodFacts.ts`
+- Android and iOS native implementations returning runtime metadata
+- An `example/` consumer app for smoke testing the package
 
-### Third party applications
+The current public API is intentionally small:
 
-Feel [free to open a PR to add your application in this list](https://github.com/openfoodfacts/openfoodfacts-react-native/edit/main/REUSERS.md).
-Please get in touch at reuse@openfoodfacts.org
-We are very interested in learning what the Open Food Facts data is used for. It is not mandatory, but we would very much appreciate it if you tell us about your re-uses (https://forms.gle/hwaeqBfs8ywwhbTg8) so that we can share them with the Open Food Facts community. You can also fill this form to get a chance to get your app featured: https://forms.gle/hwaeqBfs8ywwhbTg8
+```ts
+getRuntimeInfo(): Promise<RuntimeInfo>
+```
 
+This is a handshake method used to confirm that the package is linked and running through the React Native New Architecture.
 
-## ✏️ Authors and Contributors
-- [EthicAdvisor](https://www.ethicadvisor.org) team
+## What Is Still Legacy
+
+The existing sample files under `API/`, `screens/`, and `assets/` remain in the repository as legacy reference material. They are not part of the package entrypoint and are not considered the source of truth for the new library.
+
+## Local Bootstrap
+
+Install dependencies at the repo root:
+
+```bash
+npm install
+```
+
+Install example dependencies:
+
+```bash
+npm install --prefix example
+```
+
+Run the smoke test app:
+
+```bash
+npm run example
+npm run example:android
+npm run example:ios
+```
+
+Run basic library checks:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+```
+
+## Project Layout
+
+```text
+.
+|-- android/
+|-- ios/
+|-- src/
+|-- example/
+|-- API/
+|-- screens/
+`-- assets/
+```
+
+## Architecture
+
+- React Native New Architecture only
+- TurboModule first
+- No Fabric UI component in phase 1
+- No legacy bridge fallback
+
+## Phase Boundaries
+
+- Phase 1: scaffolding, native registration, codegen, smoke test example
+- Phase 2: first real Open Food Facts read API, likely product lookup by barcode
+- Later phases: authenticated writes, uploads, image workflows, and richer domain APIs
+
+## Reference Links
+
+- [Open Food Facts API documentation](https://openfoodfacts.github.io/openfoodfacts-server/api/)
+- [Open Food Facts JavaScript wiki](https://wiki.openfoodfacts.org/API/Javascript)
+
+## License
+
+Apache 2.0. See [LICENSE](./LICENSE).

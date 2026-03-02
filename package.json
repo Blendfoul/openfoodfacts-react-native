@@ -1,0 +1,81 @@
+{
+  "name": "react-native-openfoodfacts",
+  "version": "0.1.0",
+  "description": "A React Native TurboModule for Open Food Facts V3 APIs.",
+  "source": "./src/index.ts",
+  "main": "./lib/commonjs/index.js",
+  "module": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "react-native": "./src/index.ts",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "example",
+    "openfoodfacts-react-native.podspec",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bob build",
+    "prepare": "bob build",
+    "clean": "rimraf lib",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.ts,.tsx,.mjs"
+  },
+  "keywords": [
+    "react-native",
+    "openfoodfacts",
+    "turbomodule",
+    "new-architecture"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openfoodfacts/openfoodfacts-react-native.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Open Food Facts contributors",
+  "homepage": "https://github.com/openfoodfacts/openfoodfacts-react-native#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.76.0"
+  },
+  "devDependencies": {
+    "@react-native/babel-preset": "^0.76.0",
+    "@react-native/codegen": "^0.76.0",
+    "@react-native/eslint-config": "^0.76.0",
+    "@types/react": "^18.3.1",
+    "eslint": "^8.57.1",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "react-native-builder-bob": "^0.35.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  },
+  "codegenConfig": {
+    "name": "RNOpenFoodFactsSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.openfoodfacts"
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": "@react-native",
+    "ignorePatterns": [
+      "lib/",
+      "example/android/",
+      "example/ios/"
+    ]
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "yarn@4.12.0"
+}
