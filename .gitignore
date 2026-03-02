@@ -6,3 +6,5 @@ example/android/app/build/
 *.xcworkspace
 Pods/
 DerivedData/
+android/build
+ios/build

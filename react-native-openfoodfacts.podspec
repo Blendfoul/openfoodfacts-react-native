@@ -1,7 +1,6 @@
 require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
-folly_compiler_flags = "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1"
 
 Pod::Spec.new do |s|
   s.name         = "react-native-openfoodfacts"
@@ -18,13 +17,12 @@ Pod::Spec.new do |s|
   s.dependency "React-Core"
 
   if ENV["RCT_NEW_ARCH_ENABLED"] == "1"
-    s.compiler_flags = "#{folly_compiler_flags} -DRCT_NEW_ARCH_ENABLED=1"
+    s.compiler_flags = "-DRCT_NEW_ARCH_ENABLED=1"
     s.pod_target_xcconfig = {
       "DEFINES_MODULE" => "YES",
       "CLANG_CXX_LANGUAGE_STANDARD" => "c++20"
     }
-    s.dependency "React-Codegen"
-    s.dependency "RCT-Folly"
+    s.dependency "ReactCodegen"
     s.dependency "RCTRequired"
     s.dependency "RCTTypeSafety"
     s.dependency "ReactCommon/turbomodule/core"

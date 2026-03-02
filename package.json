@@ -13,10 +13,13 @@
     "android",
     "ios",
     "example",
-    "openfoodfacts-react-native.podspec",
+    "react-native-openfoodfacts.podspec",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
+  ],
+  "workspaces": [
+    "example"
   ],
   "scripts": {
     "build": "bob build",
@@ -64,15 +67,6 @@
     "android": {
       "javaPackageName": "com.openfoodfacts"
     }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": "@react-native",
-    "ignorePatterns": [
-      "lib/",
-      "example/android/",
-      "example/ios/"
-    ]
   },
   "engines": {
     "node": ">=18"

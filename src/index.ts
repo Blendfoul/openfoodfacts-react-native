@@ -65,19 +65,19 @@ function getNativeModule() {
 }
 
 export function getRuntimeInfo(): Promise<RuntimeInfo> {
-  return getNativeModule().getRuntimeInfo();
+  return getNativeModule().getRuntimeInfo() as Promise<RuntimeInfo>;
 }
 
 export function configure(config: OffConfigInput): Promise<OffConfigState> {
-  return getNativeModule().configure(config);
+  return getNativeModule().configure(config) as Promise<OffConfigState>;
 }
 
 export function getConfig(): Promise<OffConfigState> {
-  return getNativeModule().getConfig();
+  return getNativeModule().getConfig() as Promise<OffConfigState>;
 }
 
 export function resetConfig(): Promise<OffConfigState> {
-  return getNativeModule().resetConfig();
+  return getNativeModule().resetConfig() as Promise<OffConfigState>;
 }
 
 export function getProduct(query: ProductQuery): Promise<ProductResponse> {

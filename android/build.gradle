@@ -42,6 +42,9 @@ android {
 
 react {
   jsRootDir = file("../")
+  reactNativeDir = rootProject.file("../node_modules/react-native")
+  codegenDir = rootProject.file("../node_modules/@react-native/codegen")
+  cliFile = rootProject.file("../node_modules/react-native/cli.js")
   libraryName = "OpenFoodFacts"
   codegenJavaPackageName = "com.openfoodfacts"
 }
