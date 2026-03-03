@@ -78,6 +78,12 @@ class OpenFoodFactsModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun search(query: ReadableMap, promise: Promise) {
+    runPromise(promise) {
+      apiClient.search(OpenFoodFactsMappers.parseSearchQuery(query))
+    }
+  }
+
   override fun saveProduct(request: ReadableMap, promise: Promise) {
     runPromise(promise) {
       OpenFoodFactsMappers.toWritableMap(apiClient.saveProduct(OpenFoodFactsMappers.parseSaveProductRequest(request)))

@@ -126,6 +126,10 @@ internal data class SuggestionsQuery(
   val limit: Int,
 )
 
+internal data class SearchQuery(
+  val parameters: Map<String, String>,
+)
+
 internal data class ProductPatchRequest(
   val code: String,
   val bodyJson: String,

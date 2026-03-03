@@ -7,4 +7,5 @@ example/android/app/build/
 Pods/
 DerivedData/
 android/build
+android/.gradle
 ios/build

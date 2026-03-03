@@ -11,7 +11,29 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-import { canonicalizeTags, configure, deleteProductImage, displayTags, fetchProductByCode, getAttributeGroups, getConfig, getExternalSources, getNutrientMetadata, getOrderedNutrients, getPreferences, getProduct, getRuntimeInfo, getSuggestions, getTagKnowledge, patchProduct, resetConfig, revertProduct, saveProduct, uploadProductImage,  } from 'react-native-openfoodfacts'
+import {
+  canonicalizeTags,
+  configure,
+  deleteProductImage,
+  displayTags,
+  fetchProductByCode,
+  getAttributeGroups,
+  getConfig,
+  getExternalSources,
+  getNutrientMetadata,
+  getOrderedNutrients,
+  getPreferences,
+  getProduct,
+  getRuntimeInfo,
+  getSuggestions,
+  getTagKnowledge,
+  patchProduct,
+  resetConfig,
+  revertProduct,
+  saveProduct,
+  search,
+  uploadProductImage,
+} from 'react-native-openfoodfacts';
 import type { OffConfigInput } from 'react-native-openfoodfacts';
 
 type ExampleResult = {
@@ -80,6 +102,14 @@ const SUGGESTIONS_QUERY = {
   limit: 5,
   query: 'chocolate',
   tagtype: 'categories',
+} as const;
+
+const SEARCH_QUERY = {
+  fields: ['code', 'product_name', 'brands'],
+  page: 1,
+  page_size: 5,
+  search_terms: 'chocolate',
+  sort_by: 'unique_scans_n',
 } as const;
 
 const CANONICALIZE_QUERY = {
@@ -300,6 +330,18 @@ const API_SECTIONS: ReadonlyArray<ApiSection> = [
           ),
         snippet: `await getSuggestions(${JSON.stringify(SUGGESTIONS_QUERY, null, 2)});`,
         title: 'getSuggestions(query)',
+      },
+      {
+        description:
+          'Runs the v2 product search endpoint. Query keys match the Open Food Facts v2 docs exactly, so pass them through unchanged.',
+        environment: 'Production API',
+        id: 'search',
+        run: () =>
+          runInEnvironment(PRODUCTION_CONFIG, async () =>
+            search(SEARCH_QUERY)
+          ),
+        snippet: `await search(${JSON.stringify(SEARCH_QUERY, null, 2)});`,
+        title: 'search(query)',
       },
       {
         description:
@@ -586,7 +628,7 @@ function App() {
                 ]}
               >
                 <Text style={[styles.badgeText, { color: colors.primary }]}>
-                  20 exported calls
+                  21 exported calls
                 </Text>
               </View>
               <View

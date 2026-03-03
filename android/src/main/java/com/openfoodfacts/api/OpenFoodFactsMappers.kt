@@ -27,6 +27,7 @@ import com.openfoodfacts.model.ProductRevertRequest
 import com.openfoodfacts.model.ProductResponse
 import com.openfoodfacts.model.SaveProductField
 import com.openfoodfacts.model.SaveProductRequest
+import com.openfoodfacts.model.SearchQuery
 import com.openfoodfacts.model.SuggestionsQuery
 import com.openfoodfacts.model.TagKnowledgeQuery
 import com.openfoodfacts.model.TaxonomyCanonicalizeQuery
@@ -166,6 +167,41 @@ internal object OpenFoodFactsMappers {
       term = term,
       limit = limit,
     )
+  }
+
+  fun parseSearchQuery(query: ReadableMap): SearchQuery {
+    val parameters = linkedMapOf<String, String>()
+    val iterator = query.keySetIterator()
+
+    while (iterator.hasNextKey()) {
+      val rawKey = iterator.nextKey()
+      val key = rawKey.trim()
+      if (key.isEmpty()) {
+        throw validation("search query parameter names must not be empty.")
+      }
+      if (query.isNull(rawKey)) {
+        continue
+      }
+
+      when (query.getType(rawKey)) {
+        ReadableType.String,
+        ReadableType.Number,
+        ReadableType.Boolean -> {
+          parameters[key] = readQueryStringValue(query, rawKey)
+        }
+
+        ReadableType.Array -> {
+          val joinedValue = readQueryStringArray(requireArray(query, rawKey), key)
+          if (joinedValue != null) {
+            parameters[key] = joinedValue
+          }
+        }
+
+        else -> throw validation("search.$key must be a string, number, boolean, or array.")
+      }
+    }
+
+    return SearchQuery(parameters = parameters)
   }
 
   fun parseProductPatchRequest(request: ReadableMap): ProductPatchRequest =
@@ -516,6 +552,34 @@ internal object OpenFoodFactsMappers {
     return result
   }
 
+  private fun readQueryStringValue(map: ReadableMap, key: String): String =
+    when (map.getType(key)) {
+      ReadableType.String -> map.getString(key)?.trim().orEmpty()
+      ReadableType.Number -> formatQueryNumber(map.getDouble(key))
+      ReadableType.Boolean -> if (map.getBoolean(key)) "1" else "0"
+      else -> throw validation("search.$key must be a string, number, or boolean.")
+    }
+
+  private fun readQueryStringArray(array: ReadableArray, key: String): String? {
+    val values = mutableListOf<String>()
+    for (index in 0 until array.size()) {
+      when (array.getType(index)) {
+        ReadableType.String -> {
+          val value = array.getString(index)?.trim().orEmpty()
+          if (value.isNotEmpty()) {
+            values += value
+          }
+        }
+
+        ReadableType.Number -> values += formatQueryNumber(array.getDouble(index))
+        ReadableType.Boolean -> values += if (array.getBoolean(index)) "1" else "0"
+        else -> throw validation("search.$key[$index] must be a string, number, or boolean.")
+      }
+    }
+
+    return values.takeIf { it.isNotEmpty() }?.joinToString(",")
+  }
+
   private fun requireTrimmedString(map: ReadableMap, key: String): String =
     map.getString(key)?.trim() ?: throw validation("$key must be a string.")
 
@@ -576,6 +640,13 @@ internal object OpenFoodFactsMappers {
       message = message,
     )
 }
+
+private fun formatQueryNumber(value: Double): String =
+  if (value % 1.0 == 0.0) {
+    value.toLong().toString()
+  } else {
+    value.toString()
+  }
 
 private fun WritableMap.putNullableString(key: String, value: String?) {
   if (value == null) {

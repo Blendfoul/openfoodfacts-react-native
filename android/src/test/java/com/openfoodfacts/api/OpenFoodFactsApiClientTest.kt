@@ -6,6 +6,7 @@ import com.openfoodfacts.model.OffUserAgent
 import com.openfoodfacts.model.ProductQuery
 import com.openfoodfacts.model.SaveProductField
 import com.openfoodfacts.model.SaveProductRequest
+import com.openfoodfacts.model.SearchQuery
 import com.openfoodfacts.model.SuggestionsQuery
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -110,6 +111,31 @@ class OpenFoodFactsApiClientTest {
     assertEquals(listOf("Alpha", "Beta"), result)
     assertEquals("15", request.requestUrl?.queryParameter("limit"))
     assertEquals("", request.requestUrl?.queryParameter("string"))
+  }
+
+  @Test
+  fun search_usesV2EndpointAndConfigDefaults() = runBlocking {
+    server.enqueue(MockResponse().setBody("""{"count":1,"products":[]}"""))
+
+    val result =
+      apiClient.search(
+        SearchQuery(
+          parameters =
+            linkedMapOf(
+              "fields" to "code,product_name",
+              "page" to "2",
+              "search_terms" to "chocolate",
+            )
+        )
+      )
+    val request = server.takeRequest()
+
+    assertEquals("""{"count":1,"products":[]}""", result)
+    assertEquals("/api/v2/search", request.requestUrl?.encodedPath)
+    assertEquals("2", request.requestUrl?.queryParameter("page"))
+    assertEquals("us", request.requestUrl?.queryParameter("cc"))
+    assertEquals("en", request.requestUrl?.queryParameter("lc"))
+    assertTrue(request.requestUrl?.queryParameterNames?.contains("app_name") == true)
   }
 
   @Test

@@ -14,6 +14,7 @@ import type {
   ProductResponse,
   RuntimeInfo,
   SaveProductRequest,
+  SearchQuery,
   SuggestionsQuery,
   TagKnowledgeQuery,
   TaxonomyCanonicalizeQuery,
@@ -48,6 +49,9 @@ export type {
   RuntimeInfo,
   SaveProductField,
   SaveProductRequest,
+  SearchQuery,
+  SearchQueryScalar,
+  SearchQueryValue,
   SuggestionsQuery,
   TagKnowledgeQuery,
   TaxonomyCanonicalizeQuery,
@@ -100,6 +104,10 @@ export function getSuggestions(
   query: SuggestionsQuery
 ): Promise<ReadonlyArray<string>> {
   return getNativeModule().getSuggestions(query);
+}
+
+export function search(query: SearchQuery): Promise<string> {
+  return getNativeModule().search(query);
 }
 
 export function saveProduct(request: SaveProductRequest): Promise<ApiStatus> {

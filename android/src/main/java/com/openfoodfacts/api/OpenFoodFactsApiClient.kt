@@ -19,6 +19,7 @@ import com.openfoodfacts.model.ProductQuery
 import com.openfoodfacts.model.ProductRevertRequest
 import com.openfoodfacts.model.ProductResponse
 import com.openfoodfacts.model.SaveProductRequest
+import com.openfoodfacts.model.SearchQuery
 import com.openfoodfacts.model.SuggestionsQuery
 import com.openfoodfacts.model.TagKnowledgeQuery
 import com.openfoodfacts.model.TaxonomyCanonicalizeQuery
@@ -166,6 +167,31 @@ internal class OpenFoodFactsApiClient(
     } catch (error: JSONException) {
       throw deserialization(error, "/api/v3/taxonomy_suggestions")
     }
+  }
+
+  suspend fun search(query: SearchQuery): String {
+    val config = configStore.get()
+    val requestQuery = LinkedHashMap(query.parameters)
+    if (!requestQuery.containsKey("cc")) {
+      requestQuery["cc"] = config.country
+    }
+    if (!requestQuery.containsKey("lc")) {
+      requestQuery["lc"] = config.productsLanguage
+    }
+    userAgentQuery(config).forEach { (key, value) ->
+      if (!requestQuery.containsKey(key)) {
+        requestQuery[key] = value
+      }
+    }
+
+    val endpoint = "/api/v2/search"
+    val payload =
+      httpClient.get(
+        url = endpoints.world(config, endpoint, requestQuery),
+        headers = jsonHeaders(config),
+      )
+    ensureSuccess(payload.statusCode, endpoint)
+    return payload.body
   }
 
   suspend fun patchProduct(request: ProductPatchRequest): String {

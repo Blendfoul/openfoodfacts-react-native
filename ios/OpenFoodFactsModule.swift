@@ -12,8 +12,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getRuntimeInfo:reject:)
   public func getRuntimeInfo(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     resolve([
       "platform": "ios",
@@ -26,8 +26,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(configure:resolve:reject:)
   public func configure(
     _ config: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -42,8 +42,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getConfig:reject:)
   public func getConfig(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       resolve(await client.getConfig())
@@ -52,8 +52,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(resetConfig:reject:)
   public func resetConfig(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       resolve(await client.resetConfig())
@@ -63,8 +63,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(getProduct:resolve:reject:)
   public func getProduct(
     _ query: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -79,8 +79,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getOrderedNutrients:reject:)
   public func getOrderedNutrients(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -95,8 +95,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getNutrientMetadata:reject:)
   public func getNutrientMetadata(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -112,8 +112,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(getSuggestions:resolve:reject:)
   public func getSuggestions(
     _ query: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -126,11 +126,28 @@ public final class OpenFoodFactsModule: NSObject {
     }
   }
 
+  @objc(search:resolve:reject:)
+  public func search(
+    _ query: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    Task {
+      do {
+        resolve(try await client.search(asSwiftDictionary(query)))
+      } catch let error as OpenFoodFactsModuleError {
+        reject(error.code, error.message, error.asNSError())
+      } catch {
+        reject("E_NETWORK", error.localizedDescription, error)
+      }
+    }
+  }
+
   @objc(saveProduct:resolve:reject:)
   public func saveProduct(
     _ request: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -146,8 +163,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(patchProduct:resolve:reject:)
   public func patchProduct(
     _ request: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -163,8 +180,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(uploadProductImage:resolve:reject:)
   public func uploadProductImage(
     _ request: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -180,8 +197,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(deleteProductImage:resolve:reject:)
   public func deleteProductImage(
     _ request: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -197,8 +214,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(canonicalizeTags:resolve:reject:)
   public func canonicalizeTags(
     _ query: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -214,8 +231,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(displayTags:resolve:reject:)
   public func displayTags(
     _ query: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -231,8 +248,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(getTagKnowledge:resolve:reject:)
   public func getTagKnowledge(
     _ query: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -248,8 +265,8 @@ public final class OpenFoodFactsModule: NSObject {
   @objc(revertProduct:resolve:reject:)
   public func revertProduct(
     _ request: NSDictionary,
-    resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -264,8 +281,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getExternalSources:reject:)
   public func getExternalSources(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -280,8 +297,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getPreferences:reject:)
   public func getPreferences(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {
@@ -296,8 +313,8 @@ public final class OpenFoodFactsModule: NSObject {
 
   @objc(getAttributeGroups:reject:)
   public func getAttributeGroups(
-    _ resolve: RCTPromiseResolveBlock,
-    reject: RCTPromiseRejectBlock
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
   ) {
     Task {
       do {

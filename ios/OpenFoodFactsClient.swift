@@ -187,6 +187,10 @@ private struct SuggestionsQuery {
   let limit: Int
 }
 
+private struct SearchQuery {
+  let parameters: [String: String]
+}
+
 private struct SaveProductField {
   let key: String
   let value: String
@@ -487,6 +491,26 @@ actor OpenFoodFactsIOSClient {
       }
       return stringValue
     }
+  }
+
+  func search(_ rawQuery: [String: Any]) async throws -> String {
+    let query = try parseSearchQuery(rawQuery)
+    var queryItems = query.parameters
+    if queryItems["cc"] == nil {
+      queryItems["cc"] = state.country
+    }
+    if queryItems["lc"] == nil {
+      queryItems["lc"] = state.productsLanguage
+    }
+    userAgentBody().forEach { key, value in
+      if queryItems[key] == nil {
+        queryItems[key] = value
+      }
+    }
+
+    let endpoint = "/api/v2/search"
+    let url = try buildURL(path: endpoint, query: queryItems)
+    return try await performRequest(url: url, method: "GET", endpoint: endpoint, headers: jsonHeaders())
   }
 
   func saveProduct(_ rawRequest: [String: Any]) async throws -> [String: Any] {
@@ -842,6 +866,26 @@ actor OpenFoodFactsIOSClient {
     )
   }
 
+  private func parseSearchQuery(_ value: [String: Any]) throws -> SearchQuery {
+    var parameters = [String: String]()
+
+    for (rawKey, rawValue) in value {
+      let key = rawKey.trimmingCharacters(in: .whitespacesAndNewlines)
+      if key.isEmpty {
+        throw OpenFoodFactsModuleError.validation("search query parameter names must not be empty.")
+      }
+      if rawValue is NSNull {
+        continue
+      }
+
+      if let queryValue = try searchQueryValue(rawValue, fieldName: "search.\(key)") {
+        parameters[key] = queryValue
+      }
+    }
+
+    return SearchQuery(parameters: parameters)
+  }
+
   private func parseProductPatchRequest(_ value: [String: Any]) throws -> ProductPatchRequest {
     let code = try nonEmptyRequiredString(value, key: "code")
     let bodyJson = try nonEmptyRequiredString(value, key: "bodyJson")
@@ -1041,6 +1085,50 @@ actor OpenFoodFactsIOSClient {
 
   private func normalizedString(from value: Any) -> String? {
     (value as? String)?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  private func searchQueryValue(_ value: Any, fieldName: String) throws -> String? {
+    if let stringValue = value as? String {
+      return stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    if let numberValue = value as? NSNumber {
+      if CFGetTypeID(numberValue) == CFBooleanGetTypeID() {
+        return numberValue.boolValue ? "1" : "0"
+      }
+      return formatQueryNumber(numberValue)
+    }
+
+    if let values = value as? [Any] {
+      let joinedValues =
+        try values.compactMap { item in
+          try searchArrayQueryValue(item, fieldName: fieldName)
+        }
+
+      return joinedValues.isEmpty ? nil : joinedValues.joined(separator: ",")
+    }
+
+    throw OpenFoodFactsModuleError.validation("\(fieldName) must be a string, number, boolean, or array.")
+  }
+
+  private func searchArrayQueryValue(_ value: Any, fieldName: String) throws -> String? {
+    if value is NSNull {
+      return nil
+    }
+
+    if let stringValue = value as? String {
+      let trimmed = stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+      return trimmed.isEmpty ? nil : trimmed
+    }
+
+    if let numberValue = value as? NSNumber {
+      if CFGetTypeID(numberValue) == CFBooleanGetTypeID() {
+        return numberValue.boolValue ? "1" : "0"
+      }
+      return formatQueryNumber(numberValue)
+    }
+
+    throw OpenFoodFactsModuleError.validation("\(fieldName) array values must be strings, numbers, or booleans.")
   }
 
   private func requiredInt(_ dictionary: [String: Any], key: String) throws -> Int {
@@ -1397,6 +1485,15 @@ actor OpenFoodFactsIOSClient {
       return nil
     }
   }
+}
+
+private func formatQueryNumber(_ value: NSNumber) -> String {
+  let doubleValue = value.doubleValue
+  if doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
+    return String(value.int64Value)
+  }
+
+  return value.stringValue
 }
 
 private func nullableValue(_ value: Any?) -> Any {

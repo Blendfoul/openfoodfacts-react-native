@@ -118,6 +118,14 @@ interface SuggestionsQuery {
   term?: string;
 }
 
+type SearchQueryScalar = string | number | boolean;
+
+type SearchQueryValue =
+  | SearchQueryScalar
+  | ReadonlyArray<SearchQueryScalar>;
+
+type SearchQuery = Readonly<Record<string, SearchQueryValue>>;
+
 interface SaveProductField {
   key: string;
   value: string;
@@ -195,6 +203,7 @@ export interface Spec extends TurboModule {
   getOrderedNutrients(): Promise<ReadonlyArray<OrderedNutrient>>;
   getNutrientMetadata(): Promise<NutrientMetadata>;
   getSuggestions(query: SuggestionsQuery): Promise<ReadonlyArray<string>>;
+  search(query: SearchQuery): Promise<string>;
   saveProduct(request: SaveProductRequest): Promise<ApiStatus>;
   patchProduct(request: ProductPatchRequest): Promise<string>;
   uploadProductImage(request: ProductImageUploadRequest): Promise<string>;

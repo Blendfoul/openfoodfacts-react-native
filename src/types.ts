@@ -125,6 +125,15 @@ export interface SuggestionsQuery {
   limit?: number;
 }
 
+export type SearchQueryScalar = string | number | boolean;
+
+// Keys are forwarded as-is to /api/v2/search so callers can use the OFF docs directly.
+export type SearchQueryValue =
+  | SearchQueryScalar
+  | ReadonlyArray<SearchQueryScalar>;
+
+export type SearchQuery = Readonly<Record<string, SearchQueryValue>>;
+
 export interface ProductPatchRequest {
   code: string;
   bodyJson: string;
