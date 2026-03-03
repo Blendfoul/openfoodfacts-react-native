@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
   s.platforms    = { :ios => "15.1" }
   s.source       = { :git => "https://github.com/openfoodfacts/openfoodfacts-react-native.git", :tag => s.version.to_s }
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.source_files = "ios/**/*.{h,mm,swift}"
   s.requires_arc = true
 
   s.dependency "React-Core"

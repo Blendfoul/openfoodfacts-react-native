@@ -1,5 +1,8 @@
-#import "OpenFoodFactsModule.h"
-#import <React/RCTBridgeModule.h>
+#ifdef RCT_NEW_ARCH_ENABLED
+#include <memory>
+#import <ReactCommon/RCTTurboModule.h>
+#import <OpenFoodFacts/OpenFoodFacts.h>
+#endif
 
 @interface RCT_EXTERN_REMAP_MODULE(OpenFoodFacts, OpenFoodFactsModule, NSObject)
 RCT_EXTERN_METHOD(getRuntimeInfo:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
@@ -22,15 +25,9 @@ RCT_EXTERN_METHOD(revertProduct:(NSDictionary *)request resolve:(RCTPromiseResol
 RCT_EXTERN_METHOD(getExternalSources:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getPreferences:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getAttributeGroups:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
-+ (BOOL)requiresMainQueueSetup;
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#if __has_include("RNOpenFoodFactsSpec.h")
-#import "RNOpenFoodFactsSpec.h"
-#import <ReactCommon/RCTTurboModule.h>
-#import <memory>
-
 @interface OpenFoodFactsModule () <NativeOpenFoodFactsSpec>
 @end
 
@@ -41,7 +38,5 @@ RCT_EXTERN_METHOD(getAttributeGroups:(RCTPromiseResolveBlock)resolve reject:(RCT
 {
   return std::make_shared<facebook::react::NativeOpenFoodFactsSpecJSI>(params);
 }
-
 @end
-#endif
 #endif

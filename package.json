@@ -70,7 +70,7 @@
     "typescript": "^5.6.3"
   },
   "codegenConfig": {
-    "name": "RNOpenFoodFactsSpec",
+    "name": "OpenFoodFacts",
     "type": "modules",
     "jsSrcsDir": "src",
     "android": {

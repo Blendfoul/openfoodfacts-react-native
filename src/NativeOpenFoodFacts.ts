@@ -1,5 +1,4 @@
 import type { TurboModule } from 'react-native';
-import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 import { NativeModules, TurboModuleRegistry } from 'react-native';
 
 interface OffUser {
@@ -120,7 +119,10 @@ interface SuggestionsQuery {
 }
 
 // Codegen cannot parse Record<string, ...> in module specs, but it does support UnsafeObject.
-type SearchQuery = UnsafeObject;
+type SearchQuery = {
+  page: number;
+  pageSize: number;
+};
 
 interface SaveProductField {
   key: string;
