@@ -803,7 +803,7 @@ actor OpenFoodFactsIOSClient {
       try validateLanguage($0, fieldName: "languages")
     }
 
-    let country =
+    let country: String? =
       if let rawCountry = value["country"], !(rawCountry is NSNull) {
         try validateCountry(rawCountry, fieldName: "country")
       } else {
@@ -910,7 +910,7 @@ actor OpenFoodFactsIOSClient {
   private func parseTaxonomyCanonicalizeQuery(_ value: [String: Any]) throws -> TaxonomyCanonicalizeQuery {
     let tagtype = try nonEmptyRequiredString(value, key: "tagtype")
     let localTags = try nonEmptyStringArray(value: value["localTags"], fieldName: "localTags")
-    let language =
+    let language: String? =
       if let rawLanguage = value["language"], !(rawLanguage is NSNull) {
         try validateLanguage(rawLanguage, fieldName: "language")
       } else {
@@ -927,7 +927,7 @@ actor OpenFoodFactsIOSClient {
   private func parseTaxonomyDisplayQuery(_ value: [String: Any]) throws -> TaxonomyDisplayQuery {
     let tagtype = try nonEmptyRequiredString(value, key: "tagtype")
     let canonicalTags = try nonEmptyStringArray(value: value["canonicalTags"], fieldName: "canonicalTags")
-    let language =
+    let language: String? =
       if let rawLanguage = value["language"], !(rawLanguage is NSNull) {
         try validateLanguage(rawLanguage, fieldName: "language")
       } else {
@@ -944,13 +944,13 @@ actor OpenFoodFactsIOSClient {
   private func parseTagKnowledgeQuery(_ value: [String: Any]) throws -> TagKnowledgeQuery {
     let tagtype = try nonEmptyRequiredString(value, key: "tagtype")
     let tag = try nonEmptyRequiredString(value, key: "tag")
-    let country =
+    let country: String? =
       if let rawCountry = value["country"], !(rawCountry is NSNull) {
         try validateCountry(rawCountry, fieldName: "country")
       } else {
         nil
       }
-    let language =
+    let language: String? =
       if let rawLanguage = value["language"], !(rawLanguage is NSNull) {
         try validateLanguage(rawLanguage, fieldName: "language")
       } else {
@@ -974,7 +974,7 @@ actor OpenFoodFactsIOSClient {
     let fields =
       try trimmedStringArray(value: value["fields"], fieldName: "fields")
         .filter { !$0.isEmpty }
-    let tagsLanguage =
+    let tagsLanguage: String? =
       if let rawTagsLanguage = value["tagsLanguage"], !(rawTagsLanguage is NSNull) {
         try validateLanguage(rawTagsLanguage, fieldName: "tagsLanguage")
       } else {
