@@ -1,5 +1,6 @@
 import type { TurboModule } from 'react-native';
 import { NativeModules, TurboModuleRegistry } from 'react-native';
+import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
 interface OffUser {
   comment?: string;
@@ -118,11 +119,17 @@ interface SuggestionsQuery {
   term?: string;
 }
 
-// Codegen cannot parse Record<string, ...> in module specs, but it does support UnsafeObject.
-type SearchQuery = {
+// Codegen can't parse our public TS SearchQuery type; keep this permissive in the native spec.
+type SearchQuery = UnsafeObject;
+
+interface SearchResult {
+  count: number;
   page: number;
+  pageCount: number;
   pageSize: number;
-};
+  products: ReadonlyArray<Product>;
+  skip: number;
+}
 
 interface SaveProductField {
   key: string;
@@ -201,7 +208,7 @@ export interface Spec extends TurboModule {
   getOrderedNutrients(): Promise<ReadonlyArray<OrderedNutrient>>;
   getNutrientMetadata(): Promise<NutrientMetadata>;
   getSuggestions(query: SuggestionsQuery): Promise<ReadonlyArray<string>>;
-  search(query: SearchQuery): Promise<string>;
+  search(query: SearchQuery): Promise<SearchResult>;
   saveProduct(request: SaveProductRequest): Promise<ApiStatus>;
   patchProduct(request: ProductPatchRequest): Promise<string>;
   uploadProductImage(request: ProductImageUploadRequest): Promise<string>;

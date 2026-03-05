@@ -124,7 +124,7 @@ class OpenFoodFactsApiClientTest {
             linkedMapOf(
               "fields" to "code,product_name",
               "page" to "2",
-              "search_terms" to "chocolate",
+              "categories_tags_en" to "en:chocolate-bars",
             )
         )
       )

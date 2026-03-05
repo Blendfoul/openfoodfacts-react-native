@@ -21,6 +21,7 @@ import type {
   TaxonomyCanonicalizeResponse,
   TaxonomyDisplayQuery,
   TaxonomyDisplayResponse,
+  SearchResult,
 } from './types';
 
 export type {
@@ -106,7 +107,7 @@ export function getSuggestions(
   return getNativeModule().getSuggestions(query);
 }
 
-export function search(query: SearchQuery): Promise<string> {
+export function search(query: SearchQuery): Promise<SearchResult> {
   return getNativeModule().search(query);
 }
 

@@ -493,7 +493,7 @@ actor OpenFoodFactsIOSClient {
     }
   }
 
-  func search(_ rawQuery: [String: Any]) async throws -> String {
+  func search(_ rawQuery: [String: Any]) async throws -> [String: Any] {
     let query = try parseSearchQuery(rawQuery)
     var queryItems = query.parameters
     if queryItems["cc"] == nil {
@@ -510,7 +510,9 @@ actor OpenFoodFactsIOSClient {
 
     let endpoint = "/api/v2/search"
     let url = try buildURL(path: endpoint, query: queryItems)
-    return try await performRequest(url: url, method: "GET", endpoint: endpoint, headers: jsonHeaders())
+    let response = try await performRequest(url: url, method: "GET", endpoint: endpoint, headers: jsonHeaders())
+
+    return try parseSearchResponse(response)
   }
 
   func saveProduct(_ rawRequest: [String: Any]) async throws -> [String: Any] {
@@ -1292,6 +1294,27 @@ actor OpenFoodFactsIOSClient {
         underlying: error
       )
     }
+  }
+
+  private func parseSearchProductResponse(_ payload: String) -> [String: Any] {
+        [
+      "code": stringOrNil(payload["code"]) ?? "",
+      "productName": nullableValue(stringOrNil(payload["product_name"])),
+      "brands": nullableValue(stringOrNil(payload["brands"])),
+    ]
+  }
+
+  private func parseSearchResponse(_ payload: String) throws -> [String: Any] {
+    let root = try decodeObject(payload, endpoint: "/api/v2/search")
+
+    return [
+      "products": (root["products"] as? [[String: Any]])?.map(parseProduct) ?? [],
+      "count": intOrNil(root["count"]) ?? 0,
+      "page": intOrNil(root["page"]) ?? 0,
+      "pageSize": intOrNil(root["page_size"]) ?? 0,
+      "pageCount": intOrNil(root["page_count"]) ?? 0,
+      "skip": intOrNil(root["skip"]) ?? 0,
+    ]
   }
 
   private func parseProductResponse(_ payload: String) throws -> [String: Any] {

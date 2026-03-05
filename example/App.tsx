@@ -34,7 +34,7 @@ import {
   search,
   uploadProductImage,
 } from 'react-native-openfoodfacts';
-import type { OffConfigInput } from 'react-native-openfoodfacts';
+import type { OffConfigInput, SearchQuery } from 'react-native-openfoodfacts';
 
 type ExampleResult = {
   error?: string;
@@ -104,11 +104,10 @@ const SUGGESTIONS_QUERY = {
   tagtype: 'categories',
 } as const;
 
-const SEARCH_QUERY = {
-  fields: ['code', 'product_name', 'brands'],
+const SEARCH_QUERY: SearchQuery = {
+  categories_tags_pt: 'pt:chocolate-bars',
   page: 1,
   page_size: 5,
-  search_terms: 'chocolate',
   sort_by: 'unique_scans_n',
 } as const;
 
@@ -541,25 +540,25 @@ function App() {
 
   const colors = isDarkMode
     ? {
-        accent: '#6BAA75',
-        background: '#0D1B1E',
-        border: '#214046',
-        card: '#13282D',
-        code: '#0F2024',
-        muted: '#A8C2B4',
-        primary: '#F3F0E5',
-        secondary: '#DBE9DD',
-      }
+      accent: '#6BAA75',
+      background: '#0D1B1E',
+      border: '#214046',
+      card: '#13282D',
+      code: '#0F2024',
+      muted: '#A8C2B4',
+      primary: '#F3F0E5',
+      secondary: '#DBE9DD',
+    }
     : {
-        accent: '#2F6E49',
-        background: '#F4EFE2',
-        border: '#D5C9A6',
-        card: '#FFF9EC',
-        code: '#F2E7CC',
-        muted: '#5D6648',
-        primary: '#18240F',
-        secondary: '#2D4025',
-      };
+      accent: '#2F6E49',
+      background: '#F4EFE2',
+      border: '#D5C9A6',
+      card: '#FFF9EC',
+      code: '#F2E7CC',
+      muted: '#5D6648',
+      primary: '#18240F',
+      secondary: '#2D4025',
+    };
 
   const runExample = async (example: ApiExample) => {
     setActiveId(example.id);

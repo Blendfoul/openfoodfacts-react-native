@@ -132,7 +132,67 @@ export type SearchQueryValue =
   | SearchQueryScalar
   | ReadonlyArray<SearchQueryScalar>;
 
-export type SearchQuery = Readonly<Record<string, SearchQueryValue>>;
+export type SearchSortBy =
+  | 'product_name'
+  | 'last_modified_t'
+  | 'scans_n'
+  | 'unique_scans_n'
+  | 'created_t'
+  | 'completeness'
+  | 'popularity_key'
+  | 'nutriscore_score'
+  | 'nova_score'
+  | 'nothing'
+  | 'ecoscore_score';
+
+export type SearchTagQueryValue = string | ReadonlyArray<string>;
+
+export type SearchTagParameter =
+  | 'additives_tags'
+  | 'allergens_tags'
+  | 'brands_tags'
+  | 'categories_tags'
+  | 'countries_tags'
+  | 'countries_tags_en'
+  | 'emb_codes_tags'
+  | 'labels_tags'
+  | 'manufacturing_places_tags'
+  | 'nutrition_grades_tags'
+  | 'origins_tags'
+  | 'packaging_tags'
+  | 'packaging_tags_de'
+  | 'purchase_places_tags'
+  | 'states_tags'
+  | 'stores_tags'
+  | 'traces_tags';
+
+export type SearchLocalizedTagParameter = `${string}_tags_${string}`;
+
+export type SearchNutrientPortion = '100g' | 'serving';
+
+export type SearchNutrientExactParameter =
+  `${string}_${SearchNutrientPortion}`;
+
+export type SearchNutrientComparisonParameter =
+  | `${string}_${SearchNutrientPortion}<${number}`
+  | `${string}_${SearchNutrientPortion}>${number}`;
+
+export type SearchQuery = Readonly<
+  {
+    fields?: string | ReadonlyArray<string>;
+    sort_by?: SearchSortBy;
+    page?: number;
+    page_size?: number;
+  } & Partial<
+    Record<SearchTagParameter | SearchLocalizedTagParameter, SearchTagQueryValue>
+  > &
+    Partial<
+      Record<
+        SearchNutrientExactParameter | SearchNutrientComparisonParameter,
+        SearchQueryScalar
+      >
+    >
+>;
 
 export interface ProductPatchRequest {
   code: string;
@@ -200,4 +260,13 @@ export interface ApiStatus {
   body?: string;
   error?: string;
   imageId?: number;
+}
+
+export interface SearchResult {
+  products: ReadonlyArray<Product>;
+  count: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  skip: number;
 }

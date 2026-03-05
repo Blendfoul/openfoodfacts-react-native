@@ -9,3 +9,12 @@ DerivedData/
 android/build
 android/.gradle
 ios/build
+android/.idea/.gitignore
+android/.idea/AndroidProjectSystem.xml
+android/.idea/gradle.xml
+android/.idea/migrations.xml
+android/.idea/misc.xml
+android/.idea/runConfigurations.xml
+android/.idea/vcs.xml
+android/.idea/caches/deviceStreaming.xml
+android/local.properties

@@ -88,6 +88,15 @@ internal data class ProductResponse(
   val hasProduct: Boolean,
 )
 
+internal data class SearchResponse(
+  val count: Int,
+  val page: Int,
+  val pageSize: Int,
+  val pageCount: Int,
+  val skip: Int,
+  val products: List<Product>,
+)
+
 internal data class OrderedNutrient(
   val id: String,
   val name: String,

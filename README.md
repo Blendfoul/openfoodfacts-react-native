@@ -108,7 +108,7 @@ Full types are exported from `src/types.ts`.
 | `getOrderedNutrients` | none | `OrderedNutrient[]` | Get OFF nutrient ordering list. |
 | `getNutrientMetadata` | none | `NutrientMetadata` | Get nutrient names and normalized units. |
 | `getSuggestions` | `SuggestionsQuery` | `string[]` | Taxonomy autocomplete suggestions. |
-| `search` | `SearchQuery` | `string` (raw JSON) | Product search (`/api/v2/search`). |
+| `search` | `SearchQuery` | `SearchResult` | Product search (`/api/v2/search`). |
 | `saveProduct` | `SaveProductRequest` | `ApiStatus` | Create/update product using form-style fields. |
 | `patchProduct` | `ProductPatchRequest` | `string` (raw JSON) | Patch product with JSON payload. |
 | `uploadProductImage` | `ProductImageUploadRequest` | `string` (raw JSON) | Upload image via JSON endpoint. |
@@ -135,7 +135,7 @@ Full types are exported from `src/types.ts`.
 - `getOrderedNutrients(): Promise<ReadonlyArray<OrderedNutrient>>`
 - `getNutrientMetadata(): Promise<NutrientMetadata>`
 - `getSuggestions(query: SuggestionsQuery): Promise<ReadonlyArray<string>>`
-- `search(query: SearchQuery): Promise<string>`
+- `search(query: SearchQuery): Promise<SearchResult>`
 - `getExternalSources(): Promise<string>`
 - `getPreferences(): Promise<string>`
 - `getAttributeGroups(): Promise<string>`
@@ -151,18 +151,19 @@ const product = await getProduct({
 });
 ```
 
-`search` forwards query keys/values directly to `/api/v2/search` (string/number/boolean/array values are supported).
+`search` supports documented `/api/v2/search` params such as `fields`, `page`, `page_size`, `sort_by`,
+tag filters (`categories_tags`, `labels_tags`, `*_tags_<language_code>`), and nutrient filters (`salt_100g<2`, etc).
 
 Search example:
 
 ```ts
-const resultJson = await search({
-  search_terms: 'chocolate',
+const result = await search({
+  categories_tags_en: 'en:chocolate-bars',
   page: 1,
   page_size: 5,
   fields: ['code', 'product_name', 'brands'],
+  sort_by: 'unique_scans_n',
 });
-const result = JSON.parse(resultJson);
 ```
 
 ### Taxonomy APIs

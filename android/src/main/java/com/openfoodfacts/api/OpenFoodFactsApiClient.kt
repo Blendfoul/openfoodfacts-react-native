@@ -20,6 +20,7 @@ import com.openfoodfacts.model.ProductRevertRequest
 import com.openfoodfacts.model.ProductResponse
 import com.openfoodfacts.model.SaveProductRequest
 import com.openfoodfacts.model.SearchQuery
+import com.openfoodfacts.model.SearchResponse
 import com.openfoodfacts.model.SuggestionsQuery
 import com.openfoodfacts.model.TagKnowledgeQuery
 import com.openfoodfacts.model.TaxonomyCanonicalizeQuery
@@ -505,6 +506,37 @@ internal class OpenFoodFactsApiClient(
       flattenOrderedNutrients(item.optJSONArray("nutrients"), destination)
     }
   }
+
+  private fun parseSearchResponse(payload: String): SearchResponse =
+    try {
+      val root = JSONObject(payload)
+
+      val count = root.optInt("count")
+      val page = root.optInt("page")
+      val pageSize = root.optInt("page_size")
+      val pageCount = root.optInt("page_count")
+      val skip = root.optInt("skip")
+
+      val products = root.optJSONArray("products")?.let { array ->
+        val results = mutableListOf<Product>()
+        for (index in 0 until array.length()) {
+          val item = array.optJSONObject(index) ?: continue
+          results += parseProduct(item)
+        }
+        results
+      } ?: emptyList()
+
+      SearchResponse(
+        count = count,
+        page = page,
+        pageSize = pageSize,
+        pageCount = pageCount,
+        skip = skip,
+        products = products,
+      )
+    } catch (error: JSONException) {
+      throw deserialization(error, "/api/v2/search")
+    }
 
   private fun parseProductResponse(payload: String): ProductResponse =
     try {
